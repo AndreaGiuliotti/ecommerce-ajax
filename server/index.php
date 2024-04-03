@@ -65,6 +65,16 @@ function setCorsHeaders() {
     header("Access-Control-Allow-Headers: Content-Type");
 }
 
+addRoute('OPTIONS', '/products', function () {
+    http_response_code(200);
+    exit();
+});
+addRoute('OPTIONS', '/products/(\d+)', function () {
+    http_response_code(200);
+    exit();
+});
+
+
 //adding route GET single product
 addRoute('GET', '/products/(\d+)', function ($path) {
     $id = Controller::GetId($path);
