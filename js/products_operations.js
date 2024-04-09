@@ -58,7 +58,14 @@ function showProduct(id) {
                 <p>Prezzo: ${product.attributes.prezzo}</p>
             `;
             formModale = new bootstrap.Modal(document.getElementById('modalProduct'));
+            document.getElementById('primario').hidden = true;
+                this.hidden = true;
+            document.getElementById('close').addEventListener('click', function() {
+                // Chiudi il modal
+                formModale.hide();
+            });
             formModale.show();
+
         })
         .catch(error => {
             console.error('Error fetching product:', error);
@@ -83,9 +90,10 @@ function deleteProduct(id) {
                 <p>Prezzo: ${product.attributes.prezzo}</p>
             `;
             formModale = new bootstrap.Modal(document.getElementById('modalProduct'));
-            formModale.show();
             const deleteButton = document.getElementById('primario');
+            deleteButton.hidden = false;
             deleteButton.setAttribute('onclick', `confirmDelete(${id})`);
+            formModale.show();
         })
         .catch(error => {
             console.error('Error fetching product:', error);
