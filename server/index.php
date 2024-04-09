@@ -110,7 +110,7 @@ addRoute('POST', '/products', function () {
         $data_raw = json_decode(file_get_contents("php://input"), true);
     }
     try {
-        $attributes = $data_raw['data']['attributes'];
+        $attributes = $data_raw['data'][0]['attributes'];
         if (!$product = Product::Create($attributes)) {
             http_response_code(500); //server error
             exit;
