@@ -133,7 +133,7 @@ addRoute('PATCH', '/products/(\d+)', function ($path) {
     }
     $data_raw = json_decode(file_get_contents("php://input"), true);
     try {
-        $attributes = $data_raw['data']['attributes'];
+        $attributes = $data_raw['data'][0]['attributes'];
         if (!$new = $product->edit($attributes)) {
             http_response_code(404); //not found - edit ritorna un Find o false se non riesce a modificare il record
             exit;
