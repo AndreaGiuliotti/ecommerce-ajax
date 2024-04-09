@@ -17,6 +17,7 @@ function populateTable(data) {
     var tableBody = document.getElementById('productTable');
     data.forEach(function (row) {
         var tr = document.createElement('tr');
+        tr.id = row.id;
         tr.innerHTML = '<td>' + row.id + '</td>' +
             '<td>' + row.attributes.nome + '</td>' +
             '<td>' + row.attributes.marca + '</td>' +
@@ -116,6 +117,7 @@ function confirmDelete(id) {
         })
         .finally(() => {
             formModale.hide(); // Nasconde la modale dopo l'eliminazione
-            fetchData(); // Aggiorna la tabella dopo l'eliminazione
+            var deleted = document.getElementById(id);
+            deleted.parentNode.removeChild(deleted);
         });
 }
