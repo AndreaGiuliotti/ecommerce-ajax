@@ -23,7 +23,7 @@ function populateTable(data) {
             '<td>' + row.attributes.marca + '</td>' +
             '<td>' + row.attributes.prezzo + '</td>' +
             '<td><button onclick="showProduct(' + row.id + ')" data-toggle="modal" data-target="productModal">Show</button></td>' +
-            '<td><button onclick="editProduct(' + row.id + ')"  data-toggle="modal" data-target="productModal">Edit</button></td>' +
+            '<td><button onclick="formEdit(' + row.id + ')"  data-toggle="modal" data-target="productModal">Edit</button></td>' +
             '<td><button onclick="deleteProduct(' + row.id + ')"  data-toggle="modal" data-target="productModal">Delete</button></td>';
         tableBody.appendChild(tr);
     });
@@ -142,11 +142,52 @@ function showProduct(id) {
         });
 }
 
-function editProduct(id) {
+function formEdit(id) {
     find(id)
         .then(product => {
-
+            const modalContent = document.getElementById('modalBody');
+            modalContent.innerHTML = `
+                <h2>Modifica Prodotto n° ${product.id}</h2>
+                <input type="hidden" id="productid" value="${product.id}">
+                <p>Nome : <input type="text" id="nome" placeholder="Nome" value="${product.attributes.nome}"></p>
+                <p>Marca : <input type="text" id="marca" placeholder="Marca" value="${product.attributes.marca}" required></p>
+                <p>Prezzo : <input type="number" id="prezzo" placeholder="Prezzo" step="0.01" value="${product.attributes.prezzo}" required></p>
+            `;
+            formModale = new bootstrap.Modal(document.getElementById('modalProduct'));
+            var patchButton = document.getElementById('primario');
+            patchButton.hidden = false;
+            patchButton.setAttribute('onclick', `editProduct(${product.id})`);
+            document.getElementById('close').addEventListener('click', function () {
+                // Chiudi il modal
+                formModale.hide();
+            });
+            formModale.show();
         })
+}
+
+function editProduct() {
+    var data = getJsonApi(document.getElementById("productid").value,document.getElementById("nome").value, document.getElementById("marca").value, document.getElementById("prezzo").value)
+    fetch(`http://localhost:10000/products/${document.getElementById("productid").value}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Errore durante la richiesta PATCH');
+            }
+            return response.json();
+        })
+        .then(data => {
+            formModale.hide();
+            fetchData();
+        })
+        .catch(error => {
+            // Gestisci gli errori durante la richiesta
+            console.error('Errore durante la richiesta PATCH:', error);
+        });
 }
 
 function deleteProduct(id) {
