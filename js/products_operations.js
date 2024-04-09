@@ -1,33 +1,34 @@
+function fetchData() {
+    var tableBody = document.getElementById('productTable');
+    tableBody.innerText = "";
+    fetch('http://localhost:8080/products')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            populateTable(data.data);
+        })
+}
+
+function populateTable(data) {
+    var tableBody = document.getElementById('productTable');
+    data.forEach(function (row) {
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td>' + row.id + '</td>' +
+            '<td>' + row.attributes.nome + '</td>' +
+            '<td>' + row.attributes.marca + '</td>' +
+            '<td>' + row.attributes.prezzo + '</td>' +
+            '<td><button onclick="showProduct(' + row.id + ')" data-toggle="modal" data-target="productModal">Show</button></td>' +
+            '<td><button onclick="editProduct(' + row.id + ')"  data-toggle="modal" data-target="productModal">Edit</button></td>' +
+            '<td><button onclick="deleteProduct(' + row.id + ')"  data-toggle="modal" data-target="productModal">Delete</button></td>';
+        tableBody.appendChild(tr);
+    });
+}
+
 window.onload = function () {
-    function fetchData() {
-        fetch('http://localhost:8080/products')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                var products = data.data;
-                populateTable(products);
-            })
-    }
-
-    function populateTable(data) {
-        var tableBody = document.getElementById('productTable');
-        data.forEach(function (row) {
-            var tr = document.createElement('tr');
-            tr.innerHTML = '<td>' + row.id + '</td>' +
-                '<td>' + row.attributes.nome + '</td>' +
-                '<td>' + row.attributes.marca + '</td>' +
-                '<td>' + row.attributes.prezzo + '</td>' +
-                '<td><button onclick="showProduct(' + row.id + ')" data-toggle="modal" data-target="productModal">Show</button></td>' +
-                '<td><button onclick="editProduct(' + row.id + ')"  data-toggle="modal" data-target="productModal">Edit</button></td>' +
-                '<td><button onclick="deleteProduct(' + row.id + ')"  data-toggle="modal" data-target="productModal">Delete</button></td>';
-            tableBody.appendChild(tr);
-        });
-    }
-
     fetchData();
 }
 
@@ -43,7 +44,9 @@ function find(id) {
             return data.data;
         });
 }
-var modal = new bootstrap.Modal(document.getElementById('modalProduct'));
+
+var formModale;
+
 function showProduct(id) {
     find(id)
         .then(product => {
@@ -54,19 +57,19 @@ function showProduct(id) {
                 <p>Marca: ${product.attributes.marca}</p>
                 <p>Prezzo: ${product.attributes.prezzo}</p>
             `;
-            modal.show();
+            formModale = new bootstrap.Modal(document.getElementById('modalProduct'));
+            formModale.show();
         })
         .catch(error => {
             console.error('Error fetching product:', error);
         });
 }
 
-
 function editProduct(id) {
     find(id)
         .then(product => {
 
-        });
+        })
 }
 
 function deleteProduct(id) {
@@ -79,26 +82,32 @@ function deleteProduct(id) {
                 <p>Marca: ${product.attributes.marca}</p>
                 <p>Prezzo: ${product.attributes.prezzo}</p>
             `;
-            modal.show();
+            formModale = new bootstrap.Modal(document.getElementById('modalProduct'));
+            formModale.show();
             const deleteButton = document.getElementById('primario');
-            deleteButton.addEventListener('click', function() {
-                fetch(`http://localhost:8080/products/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        window.prompt('Product deleted successfully');
-                        // You can perform additional actions after successful deletion
-                    })
-                modal.hide(); // Hide the modal after deleting
-            });
+            deleteButton.setAttribute('onclick', `confirmDelete(${id})`);
         })
         .catch(error => {
             console.error('Error fetching product:', error);
+        });
+}
+
+function confirmDelete(id) {
+    fetch(`http://localhost:8080/products/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => {
+            if (response.ok) {
+                window.alert('Prodotto eliminato');
+            } else {
+                window.alert("Errore durante l'eliminazione del prodotto");
+            }
+        })
+        .finally(() => {
+            formModale.hide(); // Nasconde la modale dopo l'eliminazione
+            fetchData(); // Aggiorna la tabella dopo l'eliminazione
         });
 }
