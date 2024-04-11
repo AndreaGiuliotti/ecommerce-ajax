@@ -118,7 +118,9 @@ class Product
 
     private static function connectToDatabase()
     {
-        $database = new Database("192.168.2.200", "andrea_giuliotti", "savagery.seconding.tossing.");
-        return $database->connect("andrea_giuliotti_ecommerce");
+        /*$database = new Database("192.168.2.200", "andrea_giuliotti", "savagery.seconding.tossing.");
+        return $database->connect("andrea_giuliotti_ecommerce");*/
+        $database = new Database("localhost", "root", "");
+        return $database->connect("ecommerce_prova");
     }
 }
