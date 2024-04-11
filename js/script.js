@@ -76,7 +76,7 @@ function formPost() {
     inputNome.setAttribute("onkeyup", `controllaCampi()`);
     inputMarca.setAttribute("onkeyup", "controllaCampi()");
     inputPrezzo.setAttribute("onkeyup", "controllaCampi()");
-    formModale.show()
+    openModal()
 }
 
 function getJsonApi(idP = null, nomeP, marcaP, prezzoP) {
@@ -111,8 +111,12 @@ function controllaCampi() {
     }
 }
 
+function openModal() {
+    formModale.show()
+}
+
 function closeModal() {
-    formModale.hide();
+    formModale.hide()
 }
 
 function postProduct() {
@@ -156,7 +160,7 @@ function showProduct(id) {
             document.getElementById('primario').hidden = true;
             this.hidden = true;
             document.getElementById('close').setAttribute('onclick', "closeModal()")
-            formModale.show();
+            openModal()
         })
         .catch(error => {
             console.error('Error fetching product:', error);
@@ -186,7 +190,7 @@ function formEdit(id) {
             inputNome.setAttribute("onkeyup", `controllaCampi()`);
             inputMarca.setAttribute("onkeyup", "controllaCampi()");
             inputPrezzo.setAttribute("onkeyup", "controllaCampi()");
-            formModale.show()
+            openModal()
         })
 }
 
@@ -235,7 +239,7 @@ function formDelete(id) {
             deleteButton.hidden = false;
             deleteButton.setAttribute('onclick', `deleteProduct(${id})`);
             document.getElementById('close').setAttribute('onclick', "closeModal()")
-            formModale.show();
+            openModal()
         })
         .catch(error => {
             console.error('Error fetching product:', error);
