@@ -63,15 +63,24 @@ function formPost() {
                 <p>Marca : <input type="text" id="marca" placeholder="Marca" required></p>
                 <p>Prezzo : <input type="number" id="prezzo" placeholder="Prezzo" step="0.01" required></p>
             `;
+
     formModale = new bootstrap.Modal(document.getElementById('modalProduct'));
     var postButton = document.getElementById('primario');
-    postButton.hidden = false;
+    postButton.hidden = true;
     postButton.setAttribute('onclick', `postProduct()`);
     document.getElementById('close').addEventListener('click', function () {
         // Chiudi il modal
         formModale.hide();
     });
-    formModale.show();
+
+
+    var inputNome = document.getElementById("nome");
+    var inputMarca = document.getElementById("marca");
+    var inputPrezzo = document.getElementById("prezzo");
+    inputNome.setAttribute("onkeyup", `controllaCampi()`);
+    inputMarca.setAttribute("onkeyup", "controllaCampi()");
+    inputPrezzo.setAttribute("onkeyup", "controllaCampi()");
+    formModale.show()
 }
 
 function getJsonApi(idP = null, nomeP, marcaP, prezzoP) {
@@ -88,6 +97,22 @@ function getJsonApi(idP = null, nomeP, marcaP, prezzoP) {
             }
         ]
     };
+}
+
+function controllaCampi() {
+    var campo1 = document.getElementById("nome");
+    var campo2 = document.getElementById("marca");
+    var campo3 = document.getElementById("prezzo");
+    var button = document.getElementById("primario");
+
+    // Controlla se tutti e tre i campi sono stati compilati
+    if (campo1.value !== "" && campo2.value !== "" && campo3.value !== "") {
+        // Mostra il bottone di conferma
+        button.hidden = false;
+    } else {
+        // Nascondi il bottone di conferma
+        button.hidden = true;
+    }
 }
 
 function postProduct() {
@@ -160,7 +185,13 @@ function formEdit(id) {
                 // Chiudi il modal
                 formModale.hide();
             });
-            formModale.show();
+            var inputNome = document.getElementById("nome");
+            var inputMarca = document.getElementById("marca");
+            var inputPrezzo = document.getElementById("prezzo");
+            inputNome.setAttribute("onkeyup", `controllaCampi()`);
+            inputMarca.setAttribute("onkeyup", "controllaCampi()");
+            inputPrezzo.setAttribute("onkeyup", "controllaCampi()");
+            formModale.show()
         })
 }
 
