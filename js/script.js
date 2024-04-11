@@ -1,5 +1,5 @@
 function fetchData() {
-    var tableBody = document.getElementById('productTable');
+    var tableBody = document.getElementById('productBody');
     tableBody.innerText = "";
     fetch('http://localhost:10000/products')
         .then(response => {
@@ -15,7 +15,7 @@ function fetchData() {
 }
 
 function populateTable(data) {
-    var tableBody = document.getElementById('productTable');
+    var tableBody = document.getElementById('productBody');
     data.forEach(function (row) {
         var tr = document.createElement('tr');
         fillARow(tr, row, tableBody)
@@ -106,7 +106,7 @@ function postProduct() {
             return response.json();
         })
         .then(data => {
-            var tableBody = document.getElementById('productTable');
+            var tableBody = document.getElementById('productBody');
             var product = data.data;
             var tr = document.createElement('tr');
             fillARow(tr, product, tableBody)
