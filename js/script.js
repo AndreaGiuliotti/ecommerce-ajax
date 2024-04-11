@@ -59,20 +59,16 @@ function formPost() {
     modalContent = document.getElementById('modalBody');
     modalContent.innerHTML = `
                 <h2>Crea Prodotto</h2>
-                <p>Nome : <input type="text" id="nome" placeholder="Nome" required></p>
-                <p>Marca : <input type="text" id="marca" placeholder="Marca" required></p>
-                <p>Prezzo : <input type="number" id="prezzo" placeholder="Prezzo" step="0.01" required></p>
+                <p>Nome : <input type="text" id="nome" placeholder="Nome"></p>
+                <p>Marca : <input type="text" id="marca" placeholder="Marca"></p>
+                <p>Prezzo : <input type="number" id="prezzo" placeholder="Prezzo" step="0.01"></p>
             `;
 
     formModale = new bootstrap.Modal(document.getElementById('modalProduct'));
     var postButton = document.getElementById('primario');
     postButton.hidden = true;
     postButton.setAttribute('onclick', `postProduct()`);
-    document.getElementById('close').addEventListener('click', function () {
-        // Chiudi il modal
-        formModale.hide();
-    });
-
+    document.getElementById('close').setAttribute('onclick', "closeModal()")
 
     var inputNome = document.getElementById("nome");
     var inputMarca = document.getElementById("marca");
@@ -115,6 +111,10 @@ function controllaCampi() {
     }
 }
 
+function closeModal() {
+    formModale.hide();
+}
+
 function postProduct() {
     var data = getJsonApi(null, document.getElementById("nome").value, document.getElementById("marca").value, document.getElementById("prezzo").value)
     fetch(`http://localhost:10000/products`, {
@@ -135,7 +135,7 @@ function postProduct() {
             var product = data.data;
             var tr = document.createElement('tr');
             fillARow(tr, product, tableBody)
-            formModale.hide();
+            closeModal()
         })
         .catch(error => {
             console.error('Errore durante la richiesta POST:', error);
@@ -155,10 +155,7 @@ function showProduct(id) {
             formModale = new bootstrap.Modal(document.getElementById('modalProduct'));
             document.getElementById('primario').hidden = true;
             this.hidden = true;
-            document.getElementById('close').addEventListener('click', function () {
-                // Chiudi il modal
-                formModale.hide();
-            });
+            document.getElementById('close').setAttribute('onclick', "closeModal()")
             formModale.show();
         })
         .catch(error => {
@@ -174,17 +171,15 @@ function formEdit(id) {
                 <h2>Modifica Prodotto n° ${product.id}</h2>
                 <input type="hidden" id="productid" value="${product.id}">
                 <p>Nome : <input type="text" id="nome" placeholder="Nome" value="${product.attributes.nome}"></p>
-                <p>Marca : <input type="text" id="marca" placeholder="Marca" value="${product.attributes.marca}" required></p>
-                <p>Prezzo : <input type="number" id="prezzo" placeholder="Prezzo" step="0.01" value="${product.attributes.prezzo}" required></p>
+                <p>Marca : <input type="text" id="marca" placeholder="Marca" value="${product.attributes.marca}"></p>
+                <p>Prezzo : <input type="number" id="prezzo" placeholder="Prezzo" step="0.01" value="${product.attributes.prezzo}"></p>
             `;
             formModale = new bootstrap.Modal(document.getElementById('modalProduct'));
             var patchButton = document.getElementById('primario');
             patchButton.hidden = false;
             patchButton.setAttribute('onclick', `editProduct(${product.id})`);
-            document.getElementById('close').addEventListener('click', function () {
-                // Chiudi il modal
-                formModale.hide();
-            });
+            document.getElementById('close').setAttribute('onclick', "closeModal()")
+
             var inputNome = document.getElementById("nome");
             var inputMarca = document.getElementById("marca");
             var inputPrezzo = document.getElementById("prezzo");
@@ -208,14 +203,13 @@ function editProduct() {
             if (!response.ok) {
                 window.alert("Errore durante l'eliminazione del prodotto");
             } else {
-                formModale.hide();
+                closeModal();
                 return response.json();
             }
         })
         .then(data => {
             var product = data.data;
             var riga = document.getElementById(`${product.id}`);
-
             riga.cells[1].innerText = product.attributes.nome;
             riga.cells[2].innerText = product.attributes.marca;
             riga.cells[3].innerText = product.attributes.prezzo;
@@ -240,6 +234,7 @@ function formDelete(id) {
             const deleteButton = document.getElementById('primario');
             deleteButton.hidden = false;
             deleteButton.setAttribute('onclick', `deleteProduct(${id})`);
+            document.getElementById('close').setAttribute('onclick', "closeModal()")
             formModale.show();
         })
         .catch(error => {
@@ -257,7 +252,7 @@ function deleteProduct(id) {
         .then(response => {
             if (response.ok) {
                 window.alert('Prodotto eliminato');
-                formModale.hide();
+                closeModal()
                 var deleted = document.getElementById(id);
                 deleted.parentNode.removeChild(deleted);
             } else {
