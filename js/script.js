@@ -22,10 +22,6 @@ function populateTable(data) {
     });
 }
 
-window.onload = function () {
-    fetchData();
-}
-
 function fillARow(row, product, body) {
     row.id = product.id;
     row.innerHTML = '<td>' + product.id + '</td>' +
@@ -36,6 +32,10 @@ function fillARow(row, product, body) {
         '<td><button onclick="formEdit(' + product.id + ')"  data-toggle="modal" data-target="productModal">Edit</button></td>' +
         '<td><button onclick="formDelete(' + product.id + ')"  data-toggle="modal" data-target="productModal">Delete</button></td>';
     body.appendChild(row);
+}
+
+window.onload = function () {
+    fetchData();
 }
 
 function find(id) {
@@ -79,6 +79,33 @@ function formPost() {
     openModal()
 }
 
+function postProduct() {
+    var data = getJsonApi(null, document.getElementById("nome").value, document.getElementById("marca").value, document.getElementById("prezzo").value)
+    fetch(`http://localhost:10000/products`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Errore durante la richiesta POST');
+            }
+            return response.json();
+        })
+        .then(data => {
+            var tableBody = document.getElementById('productBody');
+            var product = data.data;
+            var tr = document.createElement('tr');
+            fillARow(tr, product, tableBody)
+            closeModal()
+        })
+        .catch(error => {
+            console.error('Errore durante la richiesta POST:', error);
+        });
+}
+
 function getJsonApi(idP = null, nomeP, marcaP, prezzoP) {
     return {
         data: [
@@ -119,33 +146,6 @@ function closeModal() {
     formModale.hide()
 }
 
-function postProduct() {
-    var data = getJsonApi(null, document.getElementById("nome").value, document.getElementById("marca").value, document.getElementById("prezzo").value)
-    fetch(`http://localhost:10000/products`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Errore durante la richiesta POST');
-            }
-            return response.json();
-        })
-        .then(data => {
-            var tableBody = document.getElementById('productBody');
-            var product = data.data;
-            var tr = document.createElement('tr');
-            fillARow(tr, product, tableBody)
-            closeModal()
-        })
-        .catch(error => {
-            console.error('Errore durante la richiesta POST:', error);
-        });
-}
-
 function showProduct(id) {
     find(id)
         .then(product => {
@@ -158,7 +158,6 @@ function showProduct(id) {
             `;
             formModale = new bootstrap.Modal(document.getElementById('modalProduct'));
             document.getElementById('primario').hidden = true;
-            this.hidden = true;
             document.getElementById('close').setAttribute('onclick', "closeModal()")
             openModal()
         })
