@@ -105,7 +105,7 @@ function postProduct() {
         })
 }
 
-function getJsonApi(idP = null, nomeP, marcaP, prezzoP) {
+function getJsonApi(idP, nomeP, marcaP, prezzoP) {
     return {
         data: [
             {
