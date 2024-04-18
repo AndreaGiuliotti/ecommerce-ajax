@@ -4,7 +4,7 @@ function fetchData() {
     fetch('http://localhost:10000/products')
         .then(response => {
             if (!response.ok) {
-                window.alert("Errore durante l'eliminazione del prodotto");
+                window.alert("Errore durante la ricerca dei prodotti")
             } else {
                 return response.json();
             }
@@ -90,9 +90,11 @@ function postProduct() {
     })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Errore durante la richiesta POST');
+                window.alert('Errore durante la richiesta POST');
             }
-            return response.json();
+            else{
+                return response.json();
+            }
         })
         .then(data => {
             var tableBody = document.getElementById('productBody');
@@ -101,9 +103,6 @@ function postProduct() {
             fillARow(tr, product, tableBody)
             closeModal()
         })
-        .catch(error => {
-            console.error('Errore durante la richiesta POST:', error);
-        });
 }
 
 function getJsonApi(idP = null, nomeP, marcaP, prezzoP) {
@@ -162,7 +161,7 @@ function showProduct(id) {
             openModal()
         })
         .catch(error => {
-            console.error('Error fetching product:', error);
+            window.alert("Error fetching product");
         });
 }
 
@@ -217,10 +216,6 @@ function editProduct() {
             riga.cells[2].innerText = product.attributes.marca;
             riga.cells[3].innerText = product.attributes.prezzo;
         })
-        .catch(error => {
-            // Gestisci gli errori durante la richiesta
-            console.error('Errore durante la richiesta PATCH:', error);
-        });
 }
 
 function formDelete(id) {
@@ -241,7 +236,7 @@ function formDelete(id) {
             openModal()
         })
         .catch(error => {
-            console.error('Error fetching product:', error);
+            window.alert("Error fetching product");
         });
 }
 
